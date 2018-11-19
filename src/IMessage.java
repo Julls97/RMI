@@ -4,6 +4,6 @@ import java.util.Date;
 public interface IMessage {
     String getText() throws RemoteException;
     String getTitle() throws RemoteException;
-    String getUser() throws RemoteException;
-    Date getDate() throws RemoteException;
+    String getLogin() throws RemoteException;
+    String getTime() throws RemoteException;
 }

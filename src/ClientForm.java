@@ -14,15 +14,15 @@ public class ClientForm extends JFrame {
         this.button1.addActionListener(new ButtonListener());
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    public JTextArea getTextArea1() {
+        return textArea1;
     }
 
     private class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            if (!textField1.getText().isEmpty()) {
-                textArea1.setText(textField1.getText());
+            if (!textField2.getText().isEmpty()) {
+                textArea1.setText(textField1.getText() + "\n" + textField2.getText() + "\n\n");
             }
         }
     }
