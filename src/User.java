@@ -1,5 +1,13 @@
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     public String name;
     public String password;
-    public String email;
+//    public String email;
+
+
+    public User(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
 }

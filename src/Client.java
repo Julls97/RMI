@@ -1,73 +1,94 @@
 import javax.swing.*;
 import java.awt.*;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.text.Format;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
-    private Client() {}
-    public static void main(String[] args) {
+
+    static User user;
+
+    public static User getUser() {
+        return user;
+    }
+
+    public static void setUser(User user) {
+        Client.user = user;
+    }
+
+    private static List<IMessage> orderStorage = new ArrayList<>();
+
+    public static void addOrder(IMessage msg) {
+        orderStorage.add(msg);
+    }
+
+
+     public static void main(String[] args) {
         ClientForm form = new ClientForm();
-        form.pack();
+//        form.pack();
         form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setScreenSettings(form);
 
         String host = (args.length < 1) ? null : args[0];
         try {
-//            Registry registry = LocateRegistry.getRegistry(host);
+            RegistrationDialog registration = new RegistrationDialog();
+            registration.pack();
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Dimension screenSize = tk.getScreenSize();
+            int screenHeight = screenSize.height;
+            int screenWidth = screenSize.width;
+            registration.setLocation(screenWidth / 4, screenHeight / 4);
+            registration.setVisible(true);
+            while (user == null) Thread.onSpinWait();
+
+
+            setScreenSettings(form);
+
+
             Registry registry = LocateRegistry.getRegistry(host, 13000);
+            IMessageContainer messageContainer = (IMessageContainer) registry.lookup("MessageContainer");
 
-//            IAddition stub = (IAddition) registry.lookup("Addition");
-            IMessageContainer msgCont = (IMessageContainer) registry.lookup("MessageContainer");
+            messageContainer.addUser(user);
 
-//            String response = String.valueOf(stub.sub(10, 20));
+            while (true) {
+                var msg = messageContainer.getAllMessages();
 
-//            Message newMsg = new Message("title1", "hi", "usr1");
-//            String response = String.valueOf(msgCont.addMessage(newMsg));
-
-//            System.out.println("response: " + response);
-
-
-        while (true) {
-            var msg = msgCont.getAllMessages();
-
-            StringBuilder result = new StringBuilder();
-            if (msg != null) {
-                msg.forEach((x)-> {
-                    try {
-                        result.append(FormatMessage(x));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                });
+                if (!orderStorage.isEmpty()) {
+                    messageContainer.addMessage((Message) orderStorage.get(0));
+                    orderStorage.remove(0);
+                }
+                StringBuilder result = new StringBuilder();
+                if (msg != null) {
+                    msg.forEach((x) -> {
+                        try {
+                            result.append(formatMessage(x));
+                        } catch (RemoteException e) {
+                            System.err.println("Client exception: " + e.toString());
+//                            e.printStackTrace();
+                        }
+                    });
+                }
+                result.toString();
+                form.getTextArea1().setText(String.valueOf(result));
             }
-            result.toString();
-
-//            String format = FormatMessage(msg);
-            form.getTextArea1().setText(String.valueOf(result));
-
-        }
 
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
-    private static String FormatMessage(IMessage msg) throws RemoteException {
-        return FormatMessage(msg.getTitle(), msg.getText(), msg.getLogin(), msg.getTime());
+    private static String formatMessage(IMessage msg) throws RemoteException {
+        return formatMessage(msg.getTitle(), msg.getText(), msg.getUser().name, msg.getTime());
     }
 
-    private static String FormatMessage(String title, String text, String login, String time) {
-        return String.format("%s\t%s\n%s\n%s", login, time, title, text);
+    private static String formatMessage(String title, String text, String login, String time) {
+        return String.format("%s\t%s\n%s\n%s\n", login, time, title, text);
     }
 
-    private static void setScreenSettings(ClientForm form) {
+    private static void setScreenSettings(JFrame form) {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension screenSize = tk.getScreenSize();
         int screenHeight = screenSize.height;

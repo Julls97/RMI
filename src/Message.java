@@ -1,17 +1,18 @@
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Time;
 import java.util.Date;
 
-public class Message implements IMessage{
+public class Message implements IMessage, Serializable {
     private String title;
     private String text;
-    private String login;
+    private User user;
     private Date time;
 
-    public Message(String title, String text, String user) {
+    public Message(String title, String text, User user) {
         this.title = title;
         this.text = text;
-        this.login = user;
+        this.user = user;
         this.time = java.util.Calendar.getInstance().getTime();
     }
 
@@ -26,8 +27,8 @@ public class Message implements IMessage{
     }
 
     @Override
-    public String getLogin() throws RemoteException {
-        return login;
+    public User getUser() throws RemoteException {
+        return user;
     }
 
     @Override

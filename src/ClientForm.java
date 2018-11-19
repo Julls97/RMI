@@ -22,7 +22,9 @@ public class ClientForm extends JFrame {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             if (!textField2.getText().isEmpty()) {
-                textArea1.setText(textField1.getText() + "\n" + textField2.getText() + "\n\n");
+                Message msg = new Message(textField1.getText(), textField2.getText(), Client.getUser());
+//                textArea1.setText(textField1.getText() + "\n" + textField2.getText() + "\n\n");
+                Client.addOrder(msg);
             }
         }
     }
