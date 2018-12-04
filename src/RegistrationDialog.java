@@ -9,12 +9,12 @@ public class RegistrationDialog extends JDialog {
 	private JButton buttonOK;
 	private JTextField textField1;
 	private JTextField textField2;
+	private JTextField textField3;
 	
 	public RegistrationDialog() {
 		setContentPane(contentPane);
 		setModal(true);
 		getRootPane().setDefaultButton(buttonOK);
-		
 		buttonOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				onOK();
@@ -23,12 +23,12 @@ public class RegistrationDialog extends JDialog {
 	}
 	
 	private void onOK() {
-		if ((textField1.getText() != "") && isValidEmailAddress(textField2.getText())) {
+		if ((textField1.getText().length() >= 3) && isValidEmailAddress(textField2.getText())) {
 			User user = new User(textField1.getText(), textField2.getText());
 			Client.setUser(user);
 			dispose();
 		} else {
-			textField2.setText("Illegal input. Try again.");
+			textField3.setText("Illegal input. Try again.");
 		}
 	}
 	

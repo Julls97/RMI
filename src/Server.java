@@ -19,8 +19,7 @@ public class Server {
 
             System.err.println("Server ready");
         } catch (Exception ex) {
-            System.err.println("Server exception: " + ex.toString());
-            ex.printStackTrace();
+            System.err.println("Lost connection.");
         }
     }
 }

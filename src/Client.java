@@ -26,13 +26,9 @@ public class Client {
 	
 	
 	public static void main(String[] args) {
-		ClientForm form = new ClientForm();
-//        form.pack();
-		form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		String host = ( args.length < 1 ) ? null : args[0];
 		try {
+			ClientForm form = new ClientForm();
+			form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			RegistrationDialog registration = new RegistrationDialog();
 			registration.setTitle("Registration");
 			registration.pack();
@@ -44,12 +40,12 @@ public class Client {
 			registration.setVisible(true);
 			while (user == null) Thread.onSpinWait();
 			
+			String host = ( args.length < 1 ) ? null : args[0];
+			Registry registry = LocateRegistry.getRegistry(host, 13000);
+			IMessageContainer messageContainer = (IMessageContainer) registry.lookup("MessageContainer");
 			
 			setScreenSettings(form);
 			form.setTitle("Chat");
-			
-			Registry registry = LocateRegistry.getRegistry(host, 13000);
-			IMessageContainer messageContainer = (IMessageContainer) registry.lookup("MessageContainer");
 			
 			messageContainer.addUser(user);
 			
@@ -76,8 +72,7 @@ public class Client {
 			}
 			
 		} catch (Exception e) {
-			System.err.println("Client exception: " + e.toString());
-//            e.printStackTrace();
+			System.err.println("Lost connection.");
 		}
 	}
 	
